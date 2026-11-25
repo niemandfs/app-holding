@@ -1,0 +1,37 @@
+# Nama workflow yang tampil di tab Actions
+name: Deploy Worker
+
+# Kapan workflow jalan
+on:
+  # Otomatis tiap ada push ke branch main
+  push:
+    branches: [main]
+  # Bisa juga dijalankan manual dari tab Actions
+  workflow_dispatch:
+
+# Kalau ada dua deploy berbarengan, yang baru menunggu yang lama selesai
+concurrency:
+  group: deploy-worker
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      # Ambil kode dari repo
+      - uses: actions/checkout@v4
+
+      # Pasang Node.js versi 22
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      # Install dependency sesuai package-lock.json (termasuk wrangler)
+      - run: npm ci
+
+      # Deploy ke Cloudflare pakai token dari GitHub Secrets
+      - run: npm run deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
