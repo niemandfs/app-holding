@@ -42,7 +42,7 @@ const html = `<!doctype html>
 <body>
   <main>
     <p class="label">$ status app</p>
-    <h1>Something is in development.</h1>
+    <h1>Coming soon.</h1>
     <p>This page is not ready yet. Check back soon.</p>
     <p><a href="https://novanfs.my.id">Back to novanfs.my.id</a></p>
   </main>
