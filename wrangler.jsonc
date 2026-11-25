@@ -2,6 +2,16 @@
 	"name": "app-holding",
 	"main": "src/index.js",
 	"compatibility_date": "2026-11-01",
+		// Domain sendiri untuk Worker ini.
+	// custom_domain: true artinya Cloudflare otomatis bikin record DNS dan sertifikat SSL-nya
+	"routes": [
+		
+		{ "pattern": "app.novanfs.my.id", "custom_domain": true }
+	],
+		// Matikan alamat *.workers.dev, cukup lewat domain sendiri
+	"workers_dev": false,
+	// Matikan link preview per versi, belum dipakai
+	"preview_urls": false,
 	"observability": {
 		"enabled": true
 	}
