@@ -1,0 +1,40 @@
+# Cek otomatis yang jalan di setiap Pull Request ke main
+name: Check
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  # Cek apakah kode Worker bisa dibundel tanpa error, tanpa benar-benar deploy
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      # Ambil kode dari PR
+      - uses: actions/checkout@v5
+
+      # Pasang Node.js versi 22
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+
+      # Install dependency sesuai package-lock.json
+      - run: npm ci
+
+      # Simulasi deploy: dicek dan dibundel, tapi tidak di-upload
+      - run: npx wrangler deploy --dry-run
+
+  # Cari password, token, atau key yang nggak sengaja ikut ke-commit
+  secret-scan:
+    runs-on: ubuntu-latest
+    steps:
+      # Ambil seluruh riwayat commit, bukan cuma yang terakhir
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      # Jalankan Gitleaks untuk scan secret
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
