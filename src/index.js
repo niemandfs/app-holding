@@ -41,7 +41,7 @@ const html = `<!doctype html>
 </head>
 <body>
   <main>
-    <p class="label">$ status app</p>
+    <p class="label">$ status app {{ENV}} </p>
     <h1>Coming soon.</h1>
     <p>This page is not ready yet. Check back soon.</p>
     <p><a href="https://novanfs.my.id">Back to novanfs.my.id</a></p>
@@ -50,15 +50,16 @@ const html = `<!doctype html>
 </html>`
 
 export default {
-  // Dijalankan setiap ada pengunjung yang membuka alamat Worker ini
-  async fetch(request) {
-    return new Response(html, {
+  // Dijalankan setiap ada pengunjung. env berisi variabel dari wrangler.jsonc
+  async fetch(request, env) {
+    // Kalau staging, tampilkan tulisan STAGING. Kalau production, kosong
+    const label = env.ENVIRONMENT === 'staging' ? '[STAGING]' : ''
+    const page = html.replace('{{ENV}}', label)
+
+    return new Response(page, {
       headers: {
-        // Kasih tahu browser bahwa isinya HTML
         'content-type': 'text/html; charset=UTF-8',
-        // Minta mesin pencari tidak mengindeks halaman ini (lapisan kedua selain tag meta)
         'x-robots-tag': 'noindex',
-        // Jangan disimpan lama di cache, biar kalau halaman diganti, pengunjung langsung lihat yang baru
         'cache-control': 'no-store',
       },
     })

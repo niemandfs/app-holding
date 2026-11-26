@@ -1,0 +1,33 @@
+# Deploy ke staging setiap ada Pull Request ke main
+name: Deploy Staging
+
+on:
+  pull_request:
+    branches: [main]
+
+# Kalau ada beberapa PR, staging menampilkan yang terakhir di-push
+concurrency:
+  group: deploy-staging
+  cancel-in-progress: true
+
+jobs:
+  deploy-staging:
+    runs-on: ubuntu-latest
+    steps:
+      # Ambil kode dari PR
+      - uses: actions/checkout@v5
+
+      # Pasang Node.js versi 22
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+
+      # Install dependency sesuai package-lock.json
+      - run: npm ci
+
+      # Deploy ke Worker staging, pakai token yang sama
+      - run: npm run deploy:staging
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
