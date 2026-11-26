@@ -12,6 +12,27 @@
 	"workers_dev": false,
 	// Matikan link preview per versi, belum dipakai
 	"preview_urls": false,
+		// Variabel untuk versi asli (production)
+	"vars": {
+		"ENVIRONMENT": "production"
+	},
+
+	// Pengaturan khusus staging. Dipakai kalau deploy dengan --env staging
+	"env": {
+		"staging": {
+			// Worker terpisah, otomatis bernama app-holding-staging
+			"routes": [
+				{ "pattern": "app-staging.novanfs.my.id", "custom_domain": true }
+			],
+			"workers_dev": false,
+			"preview_urls": false,
+			// Variabel penanda bahwa ini staging
+			"vars": {
+				"ENVIRONMENT": "staging"
+			}
+		}
+	},
+
 	"observability": {
 		"enabled": true
 	}
